@@ -1,0 +1,133 @@
+/* Shama Khalil, 12-12-2017
+ *  Code for prototype without Arduino. Controls via keyboard
+ Size change:
+ Color change:
+ Shape change:
+ Speed of rotation:   
+*/
+
+// Global vars for shape variation
+int[] numRotationsList = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1};
+int numRotations;
+boolean motion;
+int value;
+int[] speedList = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+int speed;
+
+// for changeColor() function
+color objectColor;
+color[] colorList = {color(225, 0, 255, 40), color(127, 0, 255, 40), color(0, 128, 255, 40), 
+  color(0, 255, 255, 40), color(0, 255, 128, 40), color(255, 255, 0, 40), color(255, 128, 0, 40), 
+  color(255, 10, 30, 40), color(30, 255, 128, 40)};
+
+void setup() {
+  fullScreen();
+  //size(1200, 800);
+  noStroke();
+  // value for size of petal
+  value = 400;
+  objectColor = colorList[0];
+  numRotations = 0;
+}
+
+void draw() {
+  background(0, 0, 0);
+  fill(objectColor);
+  translate(width/2, height/2);
+
+  for (int q = 0; q < 360; q+=30) {
+    // cool abstract effect for radians(0<x<4?)
+    rotate(radians(numRotations));
+    beginShape();
+    for (int i = -90; i <= 90; i+=3) {
+      // default value for angle 
+      float angle = sin(radians(90+i))*value;
+      // to stop movement, do frameCount*0
+      // do frameCount*i for something wicked
+      float x = sin(radians(i*3+frameCount*speed))*(angle);
+      float y = -i*2;
+      vertex(x, y);
+    }
+    endShape();
+  }
+}
+
+// Variables for array positioning
+int i;
+int l;
+int x;
+int z;
+void keyPressed() {
+  // Color change
+  switch(key) {
+    // Size change
+  case 'a': 
+            value += 60;
+            break;
+  case 's':/* 
+            if (value >= 430) {
+              value -= 30;
+              println(value);
+            }*/
+            value -=60;
+            break;
+            
+  // Color change
+  case 'd': 
+            if ( i >= colorList.length) { 
+              i = 0;
+            } 
+            if (i < colorList.length ) {
+              objectColor = colorList[i];
+              i++;
+            }               
+            break;
+  case 'f': 
+            if ( i <= 0) { 
+              i = colorList.length - 1;
+            } 
+            if (i < colorList.length ) {
+              objectColor = colorList[i];
+              i--;
+            }               
+            break;
+            
+  // Shape change
+  case 'j': 
+            if (l < numRotationsList.length - 1) {
+              l++;
+              numRotations = numRotationsList[l];
+            } else {
+              l = 0; 
+              numRotations = numRotationsList[l];
+            }
+            break;
+  case 'k':
+            // if l is within array bounds
+            if (l < numRotationsList.length && l > 0) {
+              l--;
+              numRotations = numRotationsList[l]; //numRotations is previous in list
+            } else {
+              l = numRotationsList.length - 1;  // if l is outside of array bounds, set equal to 0
+              numRotations = numRotationsList[l];
+            }
+            break;
+            
+  // Speed of rotation
+  case 'c': 
+            if (x < speedList.length - 1) {
+              x++;
+              speed = speedList[x];
+            } 
+            break;            
+  case 'v': 
+            if (x < speedList.length && x > 0) {
+              x--;
+              speed = speedList[x]; //numRotations is previous in list
+            } 
+            break; 
+  case 'b': 
+            speed = 0;
+            break;
+  }
+}
